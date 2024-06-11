@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Mesh3D.h"
 #include <glad/glad.h>
-#include <GL/GL.h>
 
 using std::vector;
 using glm::mat4;

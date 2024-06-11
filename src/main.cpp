@@ -32,7 +32,7 @@ struct Scene {
 ShaderProgram perspectiveUniformColorShader() {
 	ShaderProgram shader;
 	try {
-		shader.load("shaders/simple_perspective.vert", "shaders/uniform_color.frag");
+		shader.load("shaders/no_transform.vert", "shaders/uniform_color.frag");
 	}
 	catch (std::runtime_error& e) {
 		std::cout << "ERROR: " << e.what() << std::endl;
