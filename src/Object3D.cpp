@@ -20,7 +20,7 @@ Object3D::Object3D(std::vector<Mesh3D>&& meshes)
 
 Object3D::Object3D(std::vector<Mesh3D>&& meshes, const glm::mat4& baseTransform)
 	: m_meshes(meshes), m_position(), m_orientation(), m_scale(1.0),
-	m_center(), m_baseTransform(baseTransform)
+	m_center(), m_baseTransform(baseTransform), m_material(0.1, 1.0, 0.3, 4)
 {
 }
 
@@ -45,6 +45,10 @@ const glm::vec3& Object3D::getCenter() const {
 
 const std::string& Object3D::getName() const {
 	return m_name;
+}
+
+const glm::vec4& Object3D::getMaterial() const {
+	return m_material;
 }
 
 size_t Object3D::numberOfChildren() const {
@@ -84,6 +88,9 @@ void Object3D::setName(const std::string& name) {
 	m_name = name;
 }
 
+void Object3D::setMaterial(const glm::vec4& material) {
+	m_material = material;
+}
 
 void Object3D::move(const glm::vec3& offset) {
 	m_position = m_position + offset;
