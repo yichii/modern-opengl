@@ -73,7 +73,7 @@ Texture loadTexture(const std::filesystem::path& path, const std::string& sample
 *  DEMONSTRATION SCENES
 *****************************************************************************************/
 Scene tank() {
-	Scene scene{ texturingShader() };
+	Scene scene{ phongLightingShader() };
 
 	std::vector<Texture> textures = {
 		loadTexture("models/White_marble_03/Textures_2K/close-up-mixture-clay-powder.jpg", "baseTexture"),
@@ -84,6 +84,8 @@ Scene tank() {
 	floor.grow(glm::vec3(30, 30, 30));
 	floor.move(glm::vec3(0, -1, 0));
 	floor.rotate(glm::vec3(-M_PI / 2, 0, 0));
+
+	glClearColor(1, 1, 1, 1);
 
 	scene.objects.push_back(std::move(floor));
 
