@@ -78,9 +78,9 @@ Scene bunny() {
 	// We assume that (0,0) in texture space is the upper left corner, but some artists use (0,0) in the lower
 	// left corner. In that case, we have to flip the V-coordinate of each UV texture location. The last parameter
 	// to assimpLoad controls this. If you load a model and it looks very strange, try changing the last parameter.
-	auto bunny = assimpLoad("models/bunny_textured.obj", true);
-	bunny.grow(glm::vec3(9, 9, 9));
-	bunny.move(glm::vec3(0.2, -1, 0));
+	auto bunny = assimpLoad("models/Tiger/tiger_I.obj", true);
+	bunny.grow(glm::vec3(0.5, 0.5, 0.5));
+	bunny.move(glm::vec3(0, -1, 0));
 	
 	// Move all objects into the scene's objects list.
 	scene.objects.push_back(std::move(bunny));
@@ -96,86 +96,6 @@ Scene bunny() {
 
 	return scene;
 }
-
-
-/**
- * @brief Demonstrates loading a square, oriented as the "floor", with a manually-specified texture
- * that does not come from Assimp.
- */
-Scene marbleSquare() {
-	Scene scene{ texturingShader() };
-
-	std::vector<Texture> textures = {
-		loadTexture("models/White_marble_03/Textures_2K/white_marble_03_2k_baseColor.tga", "baseTexture"),
-	};
-	auto mesh = Mesh3D::square(textures);
-	auto floor = Object3D(std::vector<Mesh3D>{mesh});
-	floor.grow(glm::vec3(5, 5, 5));
-	floor.move(glm::vec3(0, -1.5, 0));
-	floor.rotate(glm::vec3(-M_PI / 2, 0, 0));
-
-	scene.objects.push_back(std::move(floor));
-	return scene;
-}
-
-/**
- * @brief Loads a cube with a cube map texture.
- */
-Scene cube() {
-	Scene scene{ texturingShader() };
-
-	auto cube = assimpLoad("models/cube.obj", true);
-
-	scene.objects.push_back(std::move(cube));
-
-	Animator spinCube;
-	spinCube.addAnimation(std::make_unique<RotationAnimation>(scene.objects[0], 10.0, glm::vec3(0, 2 * M_PI, 0)));
-	// Then spin around the x axis.
-	spinCube.addAnimation(std::make_unique<RotationAnimation>(scene.objects[0], 10.0, glm::vec3(2 * M_PI, 0, 0)));
-
-	scene.animators.push_back(std::move(spinCube));
-
-	return scene;
-}
-
-/**
- * @brief Constructs a scene of a tiger sitting in a boat, where the tiger is the child object
- * of the boat.
- * @return
- */
-Scene lifeOfPi() {
-	// This scene is more complicated; it has child objects, as well as animators.
-	Scene scene{ texturingShader() };
-
-	auto boat = assimpLoad("models/boat/boat.fbx", true);
-	boat.move(glm::vec3(0, -0.7, 0));
-	boat.grow(glm::vec3(0.01, 0.01, 0.01));
-	auto tiger = assimpLoad("models/tiger/scene.gltf", true);
-	tiger.move(glm::vec3(0, -5, 10));
-	// Move the tiger to be a child of the boat.
-	boat.addChild(std::move(tiger));
-
-	// Move the boat into the scene list.
-	scene.objects.push_back(std::move(boat));
-
-	// We want these animations to referenced the *moved* objects, which are no longer
-	// in the variables named "tiger" and "boat". "boat" is now in the "objects" list at
-	// index 0, and "tiger" is the index-1 child of the boat.
-	Animator animBoat;
-	animBoat.addAnimation(std::make_unique<RotationAnimation>(scene.objects[0], 10, glm::vec3(0, 2 * M_PI, 0)));
-	Animator animTiger;
-	animTiger.addAnimation(std::make_unique<RotationAnimation>(scene.objects[0].getChild(1), 10, glm::vec3(0, 0, 2 * M_PI)));
-
-	// The Animators will be destroyed when leaving this function, so we move them into
-	// a list to be returned.
-	scene.animators.push_back(std::move(animBoat));
-	scene.animators.push_back(std::move(animTiger));
-
-	// Transfer ownership of the objects and animators back to the main.
-	return scene;
-}
-
-
 
 int main() {
 	
@@ -194,7 +114,7 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 
 	// Inintialize scene objects.
-	auto myScene = lifeOfPi();
+	auto myScene = bunny();
 	// You can directly access specific objects in the scene using references.
 	auto& firstObject = myScene.objects[0];
 
@@ -202,7 +122,7 @@ int main() {
 	myScene.program.activate();
 
 	// Set up the view and projection matrices.
-	glm::vec3 cameraPos = glm::vec3(0, 0, 5);
+	glm::vec3 cameraPos = glm::vec3(0, 0, 10);
 	glm::mat4 camera = glm::lookAt(cameraPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	glm::mat4 perspective = glm::perspective(glm::radians(45.0), static_cast<double>(window.getSize().x) / window.getSize().y, 0.1, 100.0);
 	myScene.program.setUniform("view", camera);
