@@ -72,27 +72,39 @@ Texture loadTexture(const std::filesystem::path& path, const std::string& sample
 /*****************************************************************************************
 *  DEMONSTRATION SCENES
 *****************************************************************************************/
-Scene bunny() {
+Scene tank() {
 	Scene scene{ texturingShader() };
+
+	std::vector<Texture> textures = {
+		loadTexture("models/White_marble_03/Textures_2K/close-up-mixture-clay-powder.jpg", "baseTexture"),
+	};
+
+	auto mesh = Mesh3D::square(textures);
+	auto floor = Object3D(std::vector<Mesh3D>{mesh});
+	floor.grow(glm::vec3(30, 30, 30));
+	floor.move(glm::vec3(0, -1, 0));
+	floor.rotate(glm::vec3(-M_PI / 2, 0, 0));
+
+	scene.objects.push_back(std::move(floor));
 
 	// We assume that (0,0) in texture space is the upper left corner, but some artists use (0,0) in the lower
 	// left corner. In that case, we have to flip the V-coordinate of each UV texture location. The last parameter
 	// to assimpLoad controls this. If you load a model and it looks very strange, try changing the last parameter.
-	auto bunny = assimpLoad("models/Tiger/tiger_I.obj", true);
-	bunny.grow(glm::vec3(0.5, 0.5, 0.5));
-	bunny.move(glm::vec3(0, -1, 0));
+	auto tank = assimpLoad("models/Tiger/tiger_I.obj", true);
+	tank.grow(glm::vec3(0.5, 0.5, 0.5));
+	tank.move(glm::vec3(0, -1, 0));
 	
 	// Move all objects into the scene's objects list.
-	scene.objects.push_back(std::move(bunny));
-	// Now the "bunny" variable is empty; if we want to refer to the bunny object, we need to reference 
+	scene.objects.push_back(std::move(tank));
+	// Now the "tank" variable is empty; if we want to refer to the tank object, we need to reference 
 	// scene.objects[0]
 
-	Animator spinBunny;
-	// Spin the bunny 360 degrees over 10 seconds.
-	spinBunny.addAnimation(std::make_unique<RotationAnimation>(scene.objects[0], 10.0, glm::vec3(0, 2 * M_PI, 0)));
+	Animator spinTank;
+	// Spin the tank 360 degrees over 10 seconds.
+	spinTank.addAnimation(std::make_unique<RotationAnimation>(scene.objects[1], 10.0, glm::vec3(0, 2 * M_PI, 0)));
 	
 	// Move all animators into the scene's animators list.
-	scene.animators.push_back(std::move(spinBunny));
+	scene.animators.push_back(std::move(spinTank));
 
 	return scene;
 }
@@ -114,7 +126,7 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 
 	// Inintialize scene objects.
-	auto myScene = bunny();
+	auto myScene = tank();
 	// You can directly access specific objects in the scene using references.
 	auto& firstObject = myScene.objects[0];
 
